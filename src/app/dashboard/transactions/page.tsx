@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Search,
   Download,
@@ -20,11 +21,19 @@ import {
 } from "@/store/api/bankingApi";
 import { downloadTransactionReceiptPDF } from "@/utils/pdfExport";
 
-export default function TransactionsHistoryPage() {
+function TransactionsContent() {
   const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
+  const urlSearch = searchParams.get("search") || "";
   const { user } = useAppSelector((state) => state.auth);
   const { filters } = useAppSelector((state) => state.transaction);
   const [flagMsg, setFlagMsg] = useState("");
+
+  useEffect(() => {
+    if (urlSearch) {
+      dispatch(setTransactionFilters({ search: urlSearch, page: 1 }));
+    }
+  }, [urlSearch, dispatch]);
 
   const { data, isLoading, isFetching } = useGetTransactionsQuery({
     page: filters.page,
@@ -278,6 +287,14 @@ export default function TransactionsHistoryPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function TransactionsHistoryPage() {
+  return (
+    <Suspense fallback={<div className="py-10 text-center text-sm text-[var(--text-muted)]">Loading transactions...</div>}>
+      <TransactionsContent />
+    </Suspense>
   );
 }
 

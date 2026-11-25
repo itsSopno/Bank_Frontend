@@ -1,17 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User, Mail, Lock, KeyRound, Phone, ArrowRight } from "lucide-react";
+import { User, Mail, Lock, KeyRound, Phone, ArrowRight, ArrowLeft, Sun, Moon } from "lucide-react";
 import { useRegisterMutation } from "@/store/api/bankingApi";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setCredentials } from "@/store/slices/authSlice";
 import { setAccounts } from "@/store/slices/accountSlice";
+import { toggleTheme } from "@/store/slices/uiSlice";
 
 export default function RegisterPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { theme } = useAppSelector((state) => state.ui);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/dashboard");
+    }
+  }, [isAuthenticated, router]);
 
   const [form, setForm] = useState({
     name: "",
@@ -48,7 +57,27 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--bg-canvas)] px-4 py-12 text-[var(--text-primary)]">
+    <div className="relative flex min-h-screen items-center justify-center bg-[var(--bg-canvas)] px-4 py-12 text-[var(--text-primary)]">
+      {/* Top Left Back to Home */}
+      <Link
+        href="/"
+        className="absolute left-6 top-6 flex items-center gap-2 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 py-2.5 text-xs font-semibold text-[var(--text-muted)] hover:border-[#FF5A1F] hover:text-[var(--text-primary)] transition-colors"
+      >
+        <ArrowLeft className="h-4 w-4" /> Back to Home
+      </Link>
+
+      {/* Top Right Theme Switch */}
+      <button
+        onClick={() => dispatch(toggleTheme())}
+        className="absolute right-6 top-6 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-3 text-[var(--text-muted)] hover:border-[#FF5A1F] transition-colors"
+      >
+        {theme === "dark" ? (
+          <Sun className="h-5 w-5 text-amber-400" />
+        ) : (
+          <Moon className="h-5 w-5 text-indigo-600" />
+        )}
+      </button>
+
       <div className="w-full max-w-md space-y-6 rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-8 shadow-2xl">
         <div className="text-center">
           <h1 className="text-2xl font-bold tracking-tight">

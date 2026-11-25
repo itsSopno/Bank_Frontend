@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useGetMeQuery } from "@/store/api/bankingApi";
-import { setAccounts } from "@/store/slices/accountSlice";
+import { clearCredentials } from "@/store/slices/authSlice";
+import { clearAccountState, setAccounts } from "@/store/slices/accountSlice";
 import Sidebar from "./Sidebar";
 import TopHeader from "./TopHeader";
 
@@ -17,9 +18,17 @@ export default function DashboardShell({
   const dispatch = useAppDispatch();
   const { isAuthenticated, isHydrated } = useAppSelector((state) => state.auth);
 
-  const { data: meData } = useGetMeQuery(undefined, {
+  const { data: meData, isError, error } = useGetMeQuery(undefined, {
     skip: !isAuthenticated,
   });
+
+  useEffect(() => {
+    if (isError && (error as any)?.status === 401) {
+      dispatch(clearCredentials());
+      dispatch(clearAccountState());
+      router.replace("/login");
+    }
+  }, [isError, error, dispatch, router]);
 
   useEffect(() => {
     if (meData?.accounts) {

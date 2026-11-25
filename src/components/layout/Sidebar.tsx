@@ -17,6 +17,7 @@ import {
   Moon,
   Bell,
   UserCog,
+  Home,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { clearCredentials } from "@/store/slices/authSlice";
@@ -175,8 +176,17 @@ export default function Sidebar() {
           </nav>
         </div>
 
-        {/* Bottom Actions: Theme Switch & Logout */}
+        {/* Bottom Actions: Home, Theme Switch & Logout */}
         <div className="border-t border-[var(--border-subtle)] p-4 space-y-2">
+          <Link
+            href="/"
+            onClick={() => dispatch(setSidebarOpen(false))}
+            className="flex w-full items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-medium text-[var(--text-muted)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] transition-colors"
+          >
+            <Home className="h-5 w-5 text-[#FF5A1F]" />
+            <span>Back to Home</span>
+          </Link>
+
           <button
             onClick={() => dispatch(toggleTheme())}
             className="flex w-full items-center justify-between rounded-2xl px-4 py-2.5 text-sm font-medium text-[var(--text-muted)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] transition-colors"
