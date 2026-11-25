@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Search, ShieldBan, CheckCircle, Eye } from "lucide-react";
+import { Search, ShieldBan, CheckCircle, Eye, UserPlus } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
 import {
   useGetAllCustomersQuery,
   useUpdateCustomerStatusMutation,
   useGetCustomerByIdQuery,
+  useRegisterMutation,
 } from "@/store/api/bankingApi";
 
 export default function CustomersManagementPage() {
@@ -30,7 +31,38 @@ export default function CustomersManagementPage() {
   );
 
   const [updateStatus] = useUpdateCustomerStatusMutation();
+  const [registerCustomer, { isLoading: isRegistering }] = useRegisterMutation();
+  const [showRegister, setShowRegister] = useState(false);
+  const [regForm, setRegForm] = useState({
+    name: "",
+    email: "",
+    password: "Password123!",
+    phone: "",
+    address: "",
+    transactionPin: "1234",
+  });
+  const [regMsg, setRegMsg] = useState("");
   const customers = data?.customers || [];
+
+  const handleRegisterCustomer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRegMsg("");
+    try {
+      await registerCustomer({ ...regForm, role: "customer" }).unwrap();
+      setShowRegister(false);
+      setRegForm({
+        name: "",
+        email: "",
+        password: "Password123!",
+        phone: "",
+        address: "",
+        transactionPin: "1234",
+      });
+      setRegMsg("New customer registered with default Savings Account!");
+    } catch (err: any) {
+      setRegMsg(err?.data?.message || "Failed to register customer.");
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -42,17 +74,93 @@ export default function CustomersManagementPage() {
           </p>
         </div>
 
-        <div className="relative w-full sm:w-72">
-          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name, email or phone..."
-            className="w-full rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface)] py-2.5 pl-10 pr-4 text-xs focus:border-[#FF5A1F] focus:outline-none"
-          />
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <div className="relative flex-1 sm:w-72">
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by name, email or phone..."
+              className="w-full rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface)] py-2.5 pl-10 pr-4 text-xs focus:border-[#FF5A1F] focus:outline-none"
+            />
+          </div>
+          <button
+            onClick={() => setShowRegister(!showRegister)}
+            className="flex items-center gap-2 rounded-2xl bg-[#FF5A1F] px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-[#FF5A1F]/25 hover:bg-[#e54e17] cursor-pointer"
+          >
+            <UserPlus className="h-4 w-4" /> Register Customer
+          </button>
         </div>
       </div>
+
+      {regMsg && (
+        <div className="rounded-2xl border border-[#00E676]/40 bg-[#00E676]/10 p-3 text-xs font-semibold text-[#00E676]">
+          {regMsg}
+        </div>
+      )}
+
+      {showRegister && (
+        <form
+          onSubmit={handleRegisterCustomer}
+          className="grid grid-cols-1 gap-4 rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6 sm:grid-cols-3"
+        >
+          <input
+            type="text"
+            required
+            placeholder="Full Name"
+            value={regForm.name}
+            onChange={(e) => setRegForm({ ...regForm, name: e.target.value })}
+            className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3 py-2 text-sm"
+          />
+          <input
+            type="email"
+            required
+            placeholder="Email Address"
+            value={regForm.email}
+            onChange={(e) => setRegForm({ ...regForm, email: e.target.value })}
+            className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3 py-2 text-sm"
+          />
+          <input
+            type="text"
+            placeholder="Phone Number"
+            value={regForm.phone}
+            onChange={(e) => setRegForm({ ...regForm, phone: e.target.value })}
+            className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3 py-2 text-sm"
+          />
+          <input
+            type="text"
+            placeholder="Address"
+            value={regForm.address}
+            onChange={(e) => setRegForm({ ...regForm, address: e.target.value })}
+            className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3 py-2 text-sm"
+          />
+          <input
+            type="password"
+            required
+            placeholder="Initial Password"
+            value={regForm.password}
+            onChange={(e) => setRegForm({ ...regForm, password: e.target.value })}
+            className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3 py-2 text-sm"
+          />
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              disabled={isRegistering}
+              className="flex-1 rounded-xl bg-[#00E676] px-4 py-2 text-xs font-bold text-black cursor-pointer"
+            >
+              {isRegistering ? "Creating..." : "Create Customer"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowRegister(false)}
+              className="rounded-xl border border-[var(--border-subtle)] px-4 py-2 text-xs"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
 
       {/* Customer Details Drawer / Card */}
       {selectedCustomerId && detailsData?.customer && (
@@ -90,6 +198,31 @@ export default function CustomersManagementPage() {
               </div>
             ))}
           </div>
+
+          {detailsData.recentTransactions?.length > 0 && (
+            <div>
+              <h4 className="mb-2 text-xs font-bold uppercase text-[var(--text-muted)]">
+                Recent Transaction History
+              </h4>
+              <div className="space-y-2 max-h-44 overflow-y-auto">
+                {detailsData.recentTransactions.map((t) => (
+                  <div
+                    key={t.id}
+                    className="flex items-center justify-between rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3 py-2 text-xs"
+                  >
+                    <span className="font-mono font-bold">{t.transactionId}</span>
+                    <span className="capitalize text-[var(--text-muted)]">
+                      {t.transactionType.replace("_", " ")}
+                    </span>
+                    <span className="font-bold">${Number(t.amount).toLocaleString()}</span>
+                    <span className="rounded-full bg-[#FF5A1F]/15 px-2 py-0.5 text-[10px] font-bold text-[#FF5A1F] uppercase">
+                      {t.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

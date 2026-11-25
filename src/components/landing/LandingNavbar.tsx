@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X, Sun, Moon, LogOut } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { toggleTheme } from "@/store/slices/uiSlice";
+import { clearCredentials } from "@/store/slices/authSlice";
+import { clearAccountState } from "@/store/slices/accountSlice";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -19,7 +21,13 @@ export default function LandingNavbar() {
 
   const dispatch = useAppDispatch();
   const { theme } = useAppSelector((state) => state.ui);
+  const { user } = useAppSelector((state) => state.auth);
   const isDark = theme === "dark";
+
+  const handleLogout = () => {
+    dispatch(clearCredentials());
+    dispatch(clearAccountState());
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -104,23 +112,43 @@ export default function LandingNavbar() {
               <span className="hidden lg:inline">{isDark ? "Light" : "Dark"}</span>
             </button>
 
-            <Link
-              href="/login"
-              className="rounded-2xl px-5 py-2 text-sm font-semibold transition-all hover:text-[#FF5A1F]"
-              style={{
-                border: "1px solid var(--land-border)",
-                background: "var(--land-surface)",
-                color: "var(--land-text-muted)",
-              }}
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/register"
-              className="rounded-2xl bg-[#FF5A1F] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-[#FF5A1F]/30 hover:bg-[#e04d18] hover:shadow-[#FF5A1F]/50 active:scale-95 transition-all"
-            >
-              Open Account
-            </Link>
+            {user ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="rounded-2xl bg-[#FF5A1F] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-[#FF5A1F]/30 hover:bg-[#e04d18] active:scale-95 transition-all"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-500 hover:bg-red-500 hover:text-white transition-all cursor-pointer"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="rounded-2xl px-5 py-2 text-sm font-semibold transition-all hover:text-[#FF5A1F]"
+                  style={{
+                    border: "1px solid var(--land-border)",
+                    background: "var(--land-surface)",
+                    color: "var(--land-text-muted)",
+                  }}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  className="rounded-2xl bg-[#FF5A1F] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-[#FF5A1F]/30 hover:bg-[#e04d18] hover:shadow-[#FF5A1F]/50 active:scale-95 transition-all"
+                >
+                  Open Account
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile: Theme toggle + hamburger */}
@@ -166,19 +194,42 @@ export default function LandingNavbar() {
             </a>
           ))}
           <div className="pt-3 flex flex-col gap-2">
-            <Link
-              href="/login"
-              className="rounded-2xl px-5 py-2.5 text-center text-sm font-semibold transition-all"
-              style={{ border: "1px solid var(--land-border)", background: "var(--land-surface)", color: "var(--land-text)" }}
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/register"
-              className="rounded-2xl bg-[#FF5A1F] px-5 py-2.5 text-center text-sm font-semibold text-white shadow-lg shadow-[#FF5A1F]/30 transition-all"
-            >
-              Open Account Free
-            </Link>
+            {user ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-2xl bg-[#FF5A1F] px-5 py-2.5 text-center text-sm font-semibold text-white shadow-lg shadow-[#FF5A1F]/30 transition-all"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMenuOpen(false);
+                  }}
+                  className="rounded-2xl border border-red-500/30 bg-red-500/10 px-5 py-2.5 text-center text-sm font-semibold text-red-500 transition-all"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="rounded-2xl px-5 py-2.5 text-center text-sm font-semibold transition-all"
+                  style={{ border: "1px solid var(--land-border)", background: "var(--land-surface)", color: "var(--land-text)" }}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  className="rounded-2xl bg-[#FF5A1F] px-5 py-2.5 text-center text-sm font-semibold text-white shadow-lg shadow-[#FF5A1F]/30 transition-all"
+                >
+                  Open Account Free
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

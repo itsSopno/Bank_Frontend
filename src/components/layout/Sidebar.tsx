@@ -15,6 +15,8 @@ import {
   ArrowDownUp,
   Sun,
   Moon,
+  Bell,
+  UserCog,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { clearCredentials } from "@/store/slices/authSlice";
@@ -76,6 +78,18 @@ const navItems: NavItem[] = [
     href: "/dashboard/reviews",
     icon: ShieldAlert,
     roles: ["admin", "bank_staff"],
+  },
+  {
+    label: "Notifications",
+    href: "/dashboard/notifications",
+    icon: Bell,
+    roles: ["admin", "bank_staff", "customer"],
+  },
+  {
+    label: "Profile & PIN",
+    href: "/dashboard/profile",
+    icon: UserCog,
+    roles: ["admin", "bank_staff", "customer"],
   },
 ];
 

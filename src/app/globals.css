@@ -3,50 +3,52 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --bg-canvas: #f4f5f7;
+  /* Dashboard UI */
+  --bg-canvas: #FEFEF3;
   --bg-surface: #ffffff;
-  --bg-elevated: #f9fafb;
-  --border-subtle: #e5e7eb;
+  --bg-elevated: #F5F5E8;
+  --border-subtle: #E8E8D8;
   --text-primary: #111827;
   --text-muted: #6b7280;
   --accent-orange: #ff5a1f;
   --accent-emerald: #00e676;
 
-  /* Landing page specific */
-  --land-bg: #f8fafc;
-  --land-bg-alt: #f1f5f9;
+  /* Landing page — Light (#FEFEF3 warm cream) */
+  --land-bg: #FEFEF3;
+  --land-bg-alt: #F5F5E8;
   --land-surface: rgba(0,0,0,0.04);
   --land-border: rgba(0,0,0,0.08);
   --land-text: #0f172a;
-  --land-text-muted: rgba(15,23,42,0.5);
-  --land-text-faint: rgba(15,23,42,0.3);
+  --land-text-muted: rgba(15,23,42,0.50);
+  --land-text-faint: rgba(15,23,42,0.30);
   --land-card-bg: rgba(0,0,0,0.03);
   --land-card-border: rgba(0,0,0,0.07);
-  --land-nav-bg: rgba(248,250,252,0.90);
-  --land-glow-orange: rgba(255,90,31,0.07);
-  --land-glow-green: rgba(0,230,118,0.05);
+  --land-nav-bg: rgba(254,254,243,0.92);
+  --land-glow-orange: rgba(255,90,31,0.08);
+  --land-glow-green: rgba(0,230,118,0.06);
 }
 
 .dark {
-  --bg-canvas: #0d0d0f;
-  --bg-surface: #16161a;
-  --bg-elevated: #1e1e24;
-  --border-subtle: #26262c;
+  /* Dashboard UI */
+  --bg-canvas: #100C08;
+  --bg-surface: #1A1410;
+  --bg-elevated: #221C16;
+  --border-subtle: #2E2520;
   --text-primary: #ffffff;
   --text-muted: #9ca3af;
 
-  /* Landing page specific — dark */
-  --land-bg: #0d0d0f;
-  --land-bg-alt: #0d0d0f;
-  --land-surface: rgba(255,255,255,0.03);
+  /* Landing page — Dark (#100C08 warm dark) */
+  --land-bg: #100C08;
+  --land-bg-alt: #150F0A;
+  --land-surface: rgba(255,255,255,0.04);
   --land-border: rgba(255,255,255,0.08);
-  --land-text: #ffffff;
-  --land-text-muted: rgba(255,255,255,0.5);
-  --land-text-faint: rgba(255,255,255,0.3);
+  --land-text: #F5F0EA;
+  --land-text-muted: rgba(245,240,234,0.50);
+  --land-text-faint: rgba(245,240,234,0.30);
   --land-card-bg: rgba(255,255,255,0.03);
   --land-card-border: rgba(255,255,255,0.08);
-  --land-nav-bg: rgba(13,13,15,0.90);
-  --land-glow-orange: rgba(255,90,31,0.10);
+  --land-nav-bg: rgba(16,12,8,0.92);
+  --land-glow-orange: rgba(255,90,31,0.12);
   --land-glow-green: rgba(0,230,118,0.08);
 }
 

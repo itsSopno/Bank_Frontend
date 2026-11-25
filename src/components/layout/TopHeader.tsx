@@ -9,8 +9,11 @@ import {
   Moon,
   CheckCheck,
   Wallet,
+  LogOut,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { clearCredentials } from "@/store/slices/authSlice";
+import { clearAccountState } from "@/store/slices/accountSlice";
 import { setSidebarOpen, toggleTheme, setGlobalSearch } from "@/store/slices/uiSlice";
 import {
   useGetMyNotificationsQuery,
@@ -18,6 +21,7 @@ import {
   useMarkNotificationAsReadMutation,
 } from "@/store/api/bankingApi";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function TopHeader() {
   const dispatch = useAppDispatch();
@@ -180,7 +184,10 @@ export default function TopHeader() {
         </div>
 
         {/* User Avatar Pill */}
-        <div className="flex items-center gap-2.5 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface)] py-1.5 pl-1.5 pr-3">
+        <Link
+          href="/dashboard/profile"
+          className="flex items-center gap-2.5 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface)] py-1.5 pl-1.5 pr-3 hover:border-[#FF5A1F] transition-colors"
+        >
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-[#FF5A1F] to-amber-500 text-xs font-bold text-white">
             {user?.name?.charAt(0).toUpperCase() || "U"}
           </div>
@@ -190,7 +197,21 @@ export default function TopHeader() {
               {user?.role?.replace("_", " ")}
             </p>
           </div>
-        </div>
+        </Link>
+
+        {/* Quick Logout Button */}
+        <button
+          onClick={() => {
+            dispatch(clearCredentials());
+            dispatch(clearAccountState());
+            router.push("/login");
+          }}
+          title="Sign Out"
+          className="flex items-center gap-1.5 rounded-full border border-red-500/25 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-500 hover:bg-red-500 hover:text-white transition-colors cursor-pointer"
+        >
+          <LogOut className="h-4 w-4" />
+          <span className="hidden md:inline">Logout</span>
+        </button>
       </div>
     </header>
   );

@@ -22,6 +22,10 @@ import {
 import CircularProgressCard from "@/components/dashboard/CircularProgressCard";
 import CashflowWaveChart from "@/components/dashboard/CashflowWaveChart";
 import EmeraldBalanceCard from "@/components/dashboard/EmeraldBalanceCard";
+import {
+  DepositWithdrawalBarChart,
+  DistributionPieChart,
+} from "@/components/dashboard/AnalyticsCharts";
 import { downloadTransactionReceiptPDF } from "@/utils/pdfExport";
 
 export default function DashboardOverviewPage() {
@@ -185,27 +189,30 @@ export default function DashboardOverviewPage() {
           </div>
 
           {/* Account Distribution */}
-          <div className="rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6">
-            <h2 className="mb-4 text-lg font-bold">Account Distribution</h2>
-            <div className="space-y-3">
-              {(analytics?.accountDistribution || []).map((item: any) => (
-                <div
-                  key={item.type}
-                  className="flex items-center justify-between rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-3.5"
-                >
-                  <div>
-                    <p className="text-xs font-bold uppercase">{item.type}</p>
-                    <p className="text-[11px] text-[var(--text-muted)]">
-                      {item.count} accounts
-                    </p>
-                  </div>
-                  <span className="rounded-full bg-[#FF5A1F]/15 px-3 py-1 text-xs font-bold text-[#FF5A1F]">
-                    ${Number(item.totalBalance).toLocaleString()}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <DistributionPieChart
+            title="Account Distribution"
+            subtitle="Accounts by type"
+            data={(analytics?.accountDistribution || []).map((item: any) => ({
+              name: item.type,
+              value: Number(item.count),
+            }))}
+          />
+        </div>
+
+        {/* Extra Analytics Row: Deposit vs Withdrawal & Loan Approval Statistics */}
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+          <DepositWithdrawalBarChart
+            deposits={Number(analytics?.totalDeposits || 0)}
+            withdrawals={Number(analytics?.totalWithdrawals || 0)}
+          />
+          <DistributionPieChart
+            title="Loan Approval Statistics"
+            subtitle="Loan applications by status"
+            data={(analytics?.loanStatistics || []).map((item: any) => ({
+              name: item.status,
+              value: Number(item.count),
+            }))}
+          />
         </div>
       </div>
     );
@@ -469,6 +476,22 @@ export default function DashboardOverviewPage() {
             Apply or Manage Loans →
           </Link>
         </div>
+      </div>
+
+      {/* Customer Transaction Distribution & Deposits vs Spending */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <DepositWithdrawalBarChart
+          deposits={Number(cAnalytics?.totalReceived || 0)}
+          withdrawals={Number(cAnalytics?.totalSent || 0)}
+        />
+        <DistributionPieChart
+          title="Transaction Distribution"
+          subtitle="Breakdown by transaction type"
+          data={(cAnalytics?.transactionDistribution || []).map((item: any) => ({
+            name: item.type,
+            value: Number(item.count),
+          }))}
+        />
       </div>
     </div>
   );
