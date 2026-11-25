@@ -1,26 +1,21 @@
-"use client";
+import LandingNavbar from "@/components/landing/LandingNavbar";
+import HeroSection from "@/components/landing/HeroSection";
+import FeaturesSection from "@/components/landing/FeaturesSection";
+import SecuritySection from "@/components/landing/SecuritySection";
+import PricingSection from "@/components/landing/PricingSection";
+import CTASection from "@/components/landing/CTASection";
+import LandingFooter from "@/components/landing/LandingFooter";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAppSelector } from "@/store/hooks";
-
-export default function HomePage() {
-  const router = useRouter();
-  const { isAuthenticated, isHydrated } = useAppSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (isHydrated) {
-      if (isAuthenticated) {
-        router.replace("/dashboard");
-      } else {
-        router.replace("/login");
-      }
-    }
-  }, [isHydrated, isAuthenticated, router]);
-
+export default function LandingPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--bg-canvas)]">
-      <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#FF5A1F] border-t-transparent" />
-    </div>
+    <main className="min-h-screen bg-[#0D0D0F]">
+      <LandingNavbar />
+      <HeroSection />
+      <FeaturesSection />
+      <SecuritySection />
+      <PricingSection />
+      <CTASection />
+      <LandingFooter />
+    </main>
   );
 }
