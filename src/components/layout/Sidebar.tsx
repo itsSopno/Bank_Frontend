@@ -23,6 +23,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { clearCredentials } from "@/store/slices/authSlice";
 import { clearAccountState } from "@/store/slices/accountSlice";
 import { setSidebarOpen, toggleTheme } from "@/store/slices/uiSlice";
+import { useIsMounted } from "@/hooks/useIsMounted";
 
 interface NavItem {
   label: string;
@@ -98,8 +99,11 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const mounted = useIsMounted();
   const { user } = useAppSelector((state) => state.auth);
   const { theme, sidebarOpen } = useAppSelector((state) => state.ui);
+  const currentTheme = mounted ? theme : "dark";
+  const currentUser = mounted ? user : null;
 
   const handleLogout = () => {
     dispatch(clearCredentials());
@@ -108,7 +112,7 @@ export default function Sidebar() {
   };
 
   const filteredNav = navItems.filter((item) =>
-    user ? item.roles.includes(user.role) : false
+    currentUser ? item.roles.includes(currentUser.role) : false
   );
 
   return (
@@ -192,15 +196,15 @@ export default function Sidebar() {
             className="flex w-full items-center justify-between rounded-2xl px-4 py-2.5 text-sm font-medium text-[var(--text-muted)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] transition-colors"
           >
             <span className="flex items-center gap-3">
-              {theme === "dark" ? (
+              {currentTheme === "dark" ? (
                 <Sun className="h-5 w-5 text-amber-400" />
               ) : (
                 <Moon className="h-5 w-5 text-indigo-500" />
               )}
-              <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+              <span>{currentTheme === "dark" ? "Light Mode" : "Dark Mode"}</span>
             </span>
             <span className="rounded-full bg-[var(--bg-elevated)] px-2.5 py-0.5 text-xs border border-[var(--border-subtle)]">
-              {theme === "dark" ? "Dark" : "Light"}
+              {currentTheme === "dark" ? "Dark" : "Light"}
             </span>
           </button>
 

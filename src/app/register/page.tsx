@@ -9,12 +9,15 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setCredentials } from "@/store/slices/authSlice";
 import { setAccounts } from "@/store/slices/accountSlice";
 import { toggleTheme } from "@/store/slices/uiSlice";
+import { useIsMounted } from "@/hooks/useIsMounted";
 
 export default function RegisterPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const mounted = useIsMounted();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const { theme } = useAppSelector((state) => state.ui);
+  const currentTheme = mounted ? theme : "dark";
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -71,7 +74,7 @@ export default function RegisterPage() {
         onClick={() => dispatch(toggleTheme())}
         className="absolute right-6 top-6 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-3 text-[var(--text-muted)] hover:border-[#FF5A1F] transition-colors"
       >
-        {theme === "dark" ? (
+        {currentTheme === "dark" ? (
           <Sun className="h-5 w-5 text-amber-400" />
         ) : (
           <Moon className="h-5 w-5 text-indigo-600" />

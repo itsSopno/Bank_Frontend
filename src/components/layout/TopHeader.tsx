@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { clearCredentials } from "@/store/slices/authSlice";
 import { clearAccountState } from "@/store/slices/accountSlice";
 import { setSidebarOpen, toggleTheme, setGlobalSearch } from "@/store/slices/uiSlice";
+import { useIsMounted } from "@/hooks/useIsMounted";
 import {
   useGetMyNotificationsQuery,
   useMarkAllNotificationsAsReadMutation,
@@ -26,9 +27,12 @@ import Link from "next/link";
 export default function TopHeader() {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const mounted = useIsMounted();
   const { user } = useAppSelector((state) => state.auth);
   const { accounts } = useAppSelector((state) => state.account);
   const { theme, globalSearch } = useAppSelector((state) => state.ui);
+  const currentTheme = mounted ? theme : "dark";
+  const currentUser = mounted ? user : null;
   const [notifOpen, setNotifOpen] = useState(false);
 
   const { data: notifData } = useGetMyNotificationsQuery(undefined, {
@@ -67,12 +71,12 @@ export default function TopHeader() {
 
         <div>
           <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
-            Good to see you, {user?.name?.split(" ")[0] || "User"}!
+            Good to see you, {currentUser?.name?.split(" ")[0] || "User"}!
           </h1>
           <p className="text-xs text-[var(--text-muted)] sm:text-sm">
-            {user?.role === "admin"
+            {currentUser?.role === "admin"
               ? "Bank Administration & Analytics Overview"
-              : user?.role === "bank_staff"
+              : currentUser?.role === "bank_staff"
               ? "Bank Operations & Verification Portal"
               : "Your Weekly Financial Update"}
           </p>
@@ -94,7 +98,7 @@ export default function TopHeader() {
         </form>
 
         {/* Orange Balance Pill (matching reference image top right) */}
-        {user?.role === "customer" && (
+        {currentUser?.role === "customer" && (
           <div className="hidden sm:flex items-center gap-2 rounded-full bg-[#FF5A1F] px-4 py-2 text-xs font-bold text-white shadow-md shadow-[#FF5A1F]/25">
             <Wallet className="h-3.5 w-3.5" />
             <span>
@@ -113,7 +117,7 @@ export default function TopHeader() {
           title="Toggle Dark / Light Mode"
           className="rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-2.5 text-[var(--text-muted)] hover:border-[#FF5A1F] hover:text-[#FF5A1F] transition-colors"
         >
-          {theme === "dark" ? (
+          {currentTheme === "dark" ? (
             <Sun className="h-4 w-4 text-amber-400" />
           ) : (
             <Moon className="h-4 w-4 text-indigo-600" />
