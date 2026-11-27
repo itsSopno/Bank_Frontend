@@ -29,7 +29,7 @@ export default function SecuritySection() {
     <section
       id="security"
       className="relative overflow-hidden px-6 py-24 transition-colors duration-300 lg:px-8"
-      style={{ background: "var(--land-bg)" }}
+      style={{ background: "var(--land-bg-alt)" }}
     >
       <Sparkle className="absolute left-[8%] top-16 h-4 w-4" />
       <Sparkle className="absolute right-[10%] bottom-14 h-3.5 w-3.5" color={ACCENT} />

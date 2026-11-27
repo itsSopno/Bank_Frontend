@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
+import { useIsMounted } from "@/hooks/useIsMounted";
 
 const ACCENT = "#FF5A1F";
 const INK = "#101114"; // text on top of the orange
@@ -81,6 +82,9 @@ function LocalTime() {
 }
 
 export default function LandingFooter() {
+  const mounted = useIsMounted();
+  const year = mounted ? new Date().getFullYear() : 2026;
+
   return (
     <footer
       className="relative overflow-hidden border-t px-6 pt-16 transition-colors duration-300 lg:px-8"
@@ -158,7 +162,7 @@ export default function LandingFooter() {
           style={{ borderColor: "var(--land-border)", color: "var(--land-text-faint)" }}
         >
           <p className="flex flex-wrap items-center gap-x-1.5">
-            © {new Date().getFullYear()} NovaBank. Made by
+            © {year} NovaBank. Made by
             Sinners Studio
           </p>
 
